@@ -10,14 +10,14 @@
 
 static _W* s_w = nullptr;
 
-void register_windy_types()
+void register_w_types()
 {
 	ClassDB::register_class<_W>();
 	s_w = memnew(_W);
     Engine::get_singleton()->add_singleton(Engine::Singleton("W", _W::get_singleton()));
 }
 
-void unregister_windy_types()
+void unregister_w_types()
 {
 	if (s_w)
 	{
