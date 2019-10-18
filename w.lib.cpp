@@ -27,15 +27,12 @@ _W* _W::singleton = nullptr;
 
 void w_impl_t::define_tag(const String& tag_name)
 {
-
-
 	int split_location = -1;
-	int next_segment_id = next_root_tag_id;
-	int parent_id = 0;
+
+	Variant arr_parent = Variant();
 	for (int segment = 0; ; ++segment)
 	{
 		ERR_FAIL_COND_MSG(segment >= k_tag_max_segments, "Tag has too many segment (.) s!");
-		ERR_FAIL_COND_MSG(next_segment_id >= (1 << k_tag_segment_bits), "Parent segment has too many sub tags!");
 
 		split_location = tag_name.find_char('.', split_location + 1);
 		String current_parent_tag_name = tag_name.substr(0, split_location);
@@ -49,15 +46,26 @@ void w_impl_t::define_tag(const String& tag_name)
 				return;
 			}
 			ERR_FAIL_COND_MSG(p_value->get_type() != Variant::Type::ARRAY, "Invalid type from tag dictionary. Expect array with [int tag_id, int sub_tag_count]");
-			Array id_and_sub_tag_count = p_value->operator Array();
 
-			parent_id = id_and_sub_tag_count[0].operator signed int();
-			next_segment_id = id_and_sub_tag_count[1].operator signed int();
-
-			id_and_sub_tag_count[1] = Variant(id_and_sub_tag_count[1].operator signed int() + 1);  // mark this segment id used so the next tag will use a different it.
+			arr_parent = *p_value;
 		}
 		else
 		{
+			int next_segment_id;
+			int parent_id;
+			if (arr_parent)
+			{
+				Array arr_parent_arr = arr_parent.operator Array();
+				parent_id = arr_parent_arr[0];
+				next_segment_id = arr_parent_arr[1];
+			}
+			else
+			{
+				next_segment_id = next_root_tag_id;
+				parent_id = 0;
+			}
+			ERR_FAIL_COND_MSG(next_segment_id >= (1 << k_tag_segment_bits), "Parent segment has too many sub tags!");
+
 			Array new_entry;
 			new_entry.resize(2);
 			int new_entry_id = parent_id | (next_segment_id << (segment * k_tag_segment_bits));
@@ -67,13 +75,17 @@ void w_impl_t::define_tag(const String& tag_name)
 
 			tag_dictionary[current_parent_tag_name] = new_entry;
 
-			parent_id = new_entry_id;
-			next_segment_id = inital_segment_id;
-
-			if (segment == 0)
+			if (arr_parent)
 			{
+				Array parent_array = arr_parent.operator Array();
+				parent_array[1] = Variant(parent_array[1].operator signed int() + 1);
+			}
+			else
+			{
+				// No parent. We must be root.
 				++next_root_tag_id;
 			}
+			arr_parent = new_entry;
 		}
 
 		if (split_location < 0)
