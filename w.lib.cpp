@@ -42,7 +42,7 @@ void w_impl_t::define_tag(const String& tag_name)
 		{
 			if (split_location == -1)
 			{
-				ERR_PRINTS((String("tag already exists!") + tag_name));
+				ERR_PRINT((String("tag already exists!") + tag_name));
 				return;
 			}
 			ERR_FAIL_COND_MSG(p_value->get_type() != Variant::Type::ARRAY, "Invalid type from tag dictionary. Expect array with [int tag_id, int sub_tag_count]");
@@ -104,7 +104,7 @@ w_tag_t w_impl_t::get_tag(const String& tag_name)
 	Variant* p_value = tag_dictionary.getptr(tag_name);
 	if (!p_value)
 	{
-		ERR_PRINTS("Unregistered tag: " + tag_name);
+		ERR_PRINT("Unregistered tag: " + tag_name);
 		return k_tag_null;
 	}
 	return w_tag_t(p_value->operator Array()[0]);
