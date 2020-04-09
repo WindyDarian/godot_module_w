@@ -150,19 +150,19 @@ bool _W::match_tag(int a, int b)
 	return impl->match_tag(a, b);
 }
 
-static void _spatial_set_rotation_quat(Spatial *spatial, const Quat &rotation)
+static void _spatial_set_rotation_quat(Node3D *spatial, const Quat &rotation)
 {
 	ERR_FAIL_NULL(spatial);
 	Transform transform = spatial->get_transform();
 	transform.set_basis(Basis(rotation));
 	spatial->set_transform(transform);
 }
-void _W::spatial_set_rotation_quat(Node *spatial, const Quat &rotation) const   // Note: Spatial doesn't have conversion to Variant...
+void _W::spatial_set_rotation_quat(Node *spatial, const Quat &rotation) const   // Note: Node3D doesn't have conversion to Variant...
 {
-	_spatial_set_rotation_quat(Object::cast_to<Spatial>(spatial), rotation);
+	_spatial_set_rotation_quat(Object::cast_to<Node3D>(spatial), rotation);
 }
 
-static void _spatial_set_rotation_quat_keep_scale(Spatial *spatial, const Quat &rotation)
+static void _spatial_set_rotation_quat_keep_scale(Node3D *spatial, const Quat &rotation)
 {
 	ERR_FAIL_NULL(spatial);
 	Transform transform = spatial->get_transform();
@@ -172,17 +172,17 @@ static void _spatial_set_rotation_quat_keep_scale(Spatial *spatial, const Quat &
 }
 void _W::spatial_set_rotation_quat_keep_scale(Node* spatial, const Quat& rotation) const
 {
-	_spatial_set_rotation_quat_keep_scale(Object::cast_to<Spatial>(spatial), rotation);
+	_spatial_set_rotation_quat_keep_scale(Object::cast_to<Node3D>(spatial), rotation);
 }
 
-static Quat _spatial_get_rotation_quat(const Spatial *spatial)
+static Quat _spatial_get_rotation_quat(const Node3D *spatial)
 {
 	ERR_FAIL_NULL_V(spatial, Quat());
 	return spatial->get_transform().basis.get_rotation_quat();
 }
 Quat _W::spatial_get_rotation_quat(const Node *spatial) const
 {
-	return _spatial_get_rotation_quat(Object::cast_to<Spatial>(spatial));
+	return _spatial_get_rotation_quat(Object::cast_to<Node3D>(spatial));
 }
 
 void _W::_bind_methods() {
