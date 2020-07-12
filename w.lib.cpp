@@ -120,8 +120,8 @@ bool w_impl_t::match_tag(w_tag_t a, w_tag_t b)
 	// a "foo.bar" matches b "foo"
 	// a "foo" does NOT match b "foo.bar"
 
-	ERR_FAIL_NULL_V_MSG(a, false, "Invalid tag a");
-	ERR_FAIL_NULL_V_MSG(b, false, "Invalid tag b");
+	ERR_FAIL_COND_V_MSG(a == k_tag_null, false, "Invalid tag a");
+	ERR_FAIL_COND_V_MSG(b == k_tag_null, false, "Invalid tag b");
 
 	uint32_t mask = (1 << k_tag_segment_bits) - 1;
 	for (int i = 0; i < k_tag_max_segments; ++i)
