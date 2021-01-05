@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "core/object.h"
 #include "core/math/quat.h"
 #include "scene/3d/node_3d.h"
 

@@ -3,6 +3,8 @@
 
 #include "w.lib.h"
 
+#include "core/variant/dictionary.h"
+
 using w_tag_t = int32_t;
 const w_tag_t k_tag_null = 0;
 const int k_tag_segment_bits = 8;

@@ -3,9 +3,6 @@
 
 #include "register_types.h"
 
-#include "core/class_db.h"
-#include "core/engine.h"
-
 #include "w.lib.h"
 
 static _W* s_w = nullptr;
