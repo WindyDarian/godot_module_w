@@ -1,7 +1,7 @@
 // Copyright (c) 2019 Windy Darian. MIT License.
 // Custom script library for things.
 
-#include "w.lib.h"
+#include "w.h"
 
 #include "core/variant/dictionary.h"
 
@@ -177,6 +177,30 @@ void _W::spatial_set_rotation_quat_keep_scale(Node* spatial, const Quat& rotatio
 	_spatial_set_rotation_quat_keep_scale(Object::cast_to<Node3D>(spatial), rotation);
 }
 
+Quat _W::quat(Vector3 forward, Vector3 up) {
+	if (forward.is_equal_approx(Vector3{0.0f, 0.0f, 0.0f}))
+	{
+		// TODO: warn
+		return Quat{ 0.0f, 0.0f, 0.0f, 1.0f };
+	}
+	Vector3 z = -forward.normalized();
+	Vector3 x = up.cross(z);
+	if (x.is_equal_approx(Vector3{0.0f, 0.0f, 0.0f}))
+	{
+		// TODO: warn
+		return Quat{ 0.0f, 0.0f, 0.0f, 1.0f };
+	}
+	x.normalize();
+	Vector3 y = z.cross(x);
+	// TODO: use a more direct math without Basis?
+	Basis basis{};
+	// Note: we want to set columns; constructor sets rows instead.
+	basis.set_axis(0, x);
+	basis.set_axis(1, y);
+	basis.set_axis(2, z);
+	return basis.get_quat();
+}
+
 static Quat _spatial_get_rotation_quat(const Node3D *spatial)
 {
 	ERR_FAIL_NULL_V(spatial, Quat());
@@ -191,6 +215,8 @@ void _W::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("spatial_set_rotation_quat", "spatial", "quat"), &_W::spatial_set_rotation_quat);
 	ClassDB::bind_method(D_METHOD("spatial_set_rotation_quat_keep_scale", "spatial", "quat"), &_W::spatial_set_rotation_quat_keep_scale);
 	ClassDB::bind_method(D_METHOD("spatial_get_rotation_quat", "spatial"), &_W::spatial_get_rotation_quat);
+
+	ClassDB::bind_method(D_METHOD("quat", "forward", "up"), &_W::quat);
 
 	ClassDB::bind_method(D_METHOD("define_tag", "tag_name"), &_W::define_tag);
 	ClassDB::bind_method(D_METHOD("get_tag", "tag_name"), &_W::get_tag);

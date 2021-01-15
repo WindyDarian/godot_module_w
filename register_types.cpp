@@ -3,7 +3,7 @@
 
 #include "register_types.h"
 
-#include "w.lib.h"
+#include "w.h"
 
 static _W* s_w = nullptr;
 

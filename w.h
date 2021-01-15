@@ -23,6 +23,9 @@ public:
 	/** Set local rotation of a spatial node from a quaternion. This will keep local scale. */
 	void spatial_set_rotation_quat_keep_scale(Node* spatial, const Quat& rotation) const;
 
+	/** Construct a quaternion from forward vector and up vector */
+	Quat quat(Vector3 forward, Vector3 up);
+
 	/** Register a new tag. */
 	void define_tag(const String& tag_name);
 	/** Get tag as int from name. */
