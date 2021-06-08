@@ -152,43 +152,43 @@ bool _W::match_tag(int a, int b)
 	return impl->match_tag(a, b);
 }
 
-static void _spatial_set_rotation_quat(Node3D *spatial, const Quat &rotation)
+static void _spatial_set_rotation_quat(Node3D *spatial, const Quaternion &rotation)
 {
 	ERR_FAIL_NULL(spatial);
-	Transform transform = spatial->get_transform();
+	Transform3D transform = spatial->get_transform();
 	transform.set_basis(Basis(rotation));
 	spatial->set_transform(transform);
 }
-void _W::spatial_set_rotation_quat(Node *spatial, const Quat &rotation) const   // Note: Node3D doesn't have conversion to Variant...
+void _W::spatial_set_rotation_quat(Node *spatial, const Quaternion &rotation) const   // Note: Node3D doesn't have conversion to Variant...
 {
 	_spatial_set_rotation_quat(Object::cast_to<Node3D>(spatial), rotation);
 }
 
-static void _spatial_set_rotation_quat_keep_scale(Node3D *spatial, const Quat &rotation)
+static void _spatial_set_rotation_quat_keep_scale(Node3D *spatial, const Quaternion &rotation)
 {
 	ERR_FAIL_NULL(spatial);
-	Transform transform = spatial->get_transform();
+	Transform3D transform = spatial->get_transform();
 	Vector3 original_scale(transform.basis.get_scale());
 	transform.set_basis(Basis(rotation, original_scale));
 	spatial->set_transform(transform);
 }
-void _W::spatial_set_rotation_quat_keep_scale(Node* spatial, const Quat& rotation) const
+void _W::spatial_set_rotation_quat_keep_scale(Node* spatial, const Quaternion& rotation) const
 {
 	_spatial_set_rotation_quat_keep_scale(Object::cast_to<Node3D>(spatial), rotation);
 }
 
-Quat _W::quat(Vector3 forward, Vector3 up) {
+Quaternion _W::quat(Vector3 forward, Vector3 up) {
 	if (forward.is_equal_approx(Vector3{0.0f, 0.0f, 0.0f}))
 	{
 		// TODO: warn
-		return Quat{ 0.0f, 0.0f, 0.0f, 1.0f };
+		return Quaternion{ 0.0f, 0.0f, 0.0f, 1.0f };
 	}
 	Vector3 z = -forward.normalized();
 	Vector3 x = up.cross(z);
 	if (x.is_equal_approx(Vector3{0.0f, 0.0f, 0.0f}))
 	{
 		// TODO: warn
-		return Quat{ 0.0f, 0.0f, 0.0f, 1.0f };
+		return Quaternion{ 0.0f, 0.0f, 0.0f, 1.0f };
 	}
 	x.normalize();
 	Vector3 y = z.cross(x);
@@ -198,22 +198,22 @@ Quat _W::quat(Vector3 forward, Vector3 up) {
 	basis.set_axis(0, x);
 	basis.set_axis(1, y);
 	basis.set_axis(2, z);
-	return basis.get_quat();
+	return basis.get_quaternion();
 }
 
-static Quat _spatial_get_rotation_quat(const Node3D *spatial)
+static Quaternion _spatial_get_rotation_quat(const Node3D *spatial)
 {
-	ERR_FAIL_NULL_V(spatial, Quat());
-	return spatial->get_transform().basis.get_rotation_quat();
+	ERR_FAIL_NULL_V(spatial, Quaternion());
+	return spatial->get_transform().basis.get_rotation_quaternion();
 }
-Quat _W::spatial_get_rotation_quat(const Node *spatial) const
+Quaternion _W::spatial_get_rotation_quat(const Node *spatial) const
 {
 	return _spatial_get_rotation_quat(Object::cast_to<Node3D>(spatial));
 }
 
 void _W::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("spatial_set_rotation_quat", "spatial", "quat"), &_W::spatial_set_rotation_quat);
-	ClassDB::bind_method(D_METHOD("spatial_set_rotation_quat_keep_scale", "spatial", "quat"), &_W::spatial_set_rotation_quat_keep_scale);
+	ClassDB::bind_method(D_METHOD("spatial_set_rotation_quat", "spatial", "quaternion"), &_W::spatial_set_rotation_quat);
+	ClassDB::bind_method(D_METHOD("spatial_set_rotation_quat_keep_scale", "spatial", "quaternion"), &_W::spatial_set_rotation_quat_keep_scale);
 	ClassDB::bind_method(D_METHOD("spatial_get_rotation_quat", "spatial"), &_W::spatial_get_rotation_quat);
 
 	ClassDB::bind_method(D_METHOD("quat", "forward", "up"), &_W::quat);

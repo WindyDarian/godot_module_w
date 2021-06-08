@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "core/math/quat.h"
+#include "core/math/quaternion.h"
 #include "scene/3d/node_3d.h"
 
 class w_impl_t;
@@ -17,14 +17,14 @@ protected:
 
 public:
 	/** Get local rotation of a spatial node as a quaternion. */
-	Quat spatial_get_rotation_quat(const Node* spatial) const;
+	Quaternion spatial_get_rotation_quat(const Node* spatial) const;
 	/** Set local rotation of a spatial node from a quaternion. This will reset local scale to one. */
-	void spatial_set_rotation_quat(Node* spatial, const Quat& rotation) const;
+	void spatial_set_rotation_quat(Node *spatial, const Quaternion& rotation) const;
 	/** Set local rotation of a spatial node from a quaternion. This will keep local scale. */
-	void spatial_set_rotation_quat_keep_scale(Node* spatial, const Quat& rotation) const;
+	void spatial_set_rotation_quat_keep_scale(Node *spatial, const Quaternion& rotation) const;
 
 	/** Construct a quaternion from forward vector and up vector */
-	Quat quat(Vector3 forward, Vector3 up);
+	Quaternion quat(Vector3 forward, Vector3 up);
 
 	/** Register a new tag. */
 	void define_tag(const String& tag_name);
