@@ -195,9 +195,9 @@ Quaternion _W::quat(Vector3 forward, Vector3 up) {
 	// TODO: use a more direct math without Basis?
 	Basis basis{};
 	// Note: we want to set columns; constructor sets rows instead.
-	basis.set_axis(0, x);
-	basis.set_axis(1, y);
-	basis.set_axis(2, z);
+	basis.set_column(0, x);
+	basis.set_column(1, y);
+	basis.set_column(2, z);
 	return basis.get_quaternion();
 }
 
