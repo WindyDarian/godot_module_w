@@ -3,5 +3,7 @@
 
 #pragma once
 
-void register_w_types();  // middle word must match module name
-void unregister_w_types();
+#include "modules/register_module_types.h"
+
+void initialize_w_module(ModuleInitializationLevel p_level);
+void uninitialize_w_module(ModuleInitializationLevel p_level);
