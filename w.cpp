@@ -178,26 +178,38 @@ void _W::spatial_set_rotation_quat_keep_scale(Node* spatial, const Quaternion& r
 }
 
 Quaternion _W::quat(Vector3 forward, Vector3 up) {
-	if (forward.is_equal_approx(Vector3{0.0f, 0.0f, 0.0f}))
-	{
+	Vector3 y = up;
+	Vector3 z = -forward;
+	Vector3 x = y.cross(z);
+	y = z.cross(x);  // Make sure orthonormal - up may change.
+	if (x.is_zero_approx() || y.is_zero_approx() || z.is_zero_approx()) {
 		// TODO: warn
 		return Quaternion{ 0.0f, 0.0f, 0.0f, 1.0f };
 	}
-	Vector3 z = -forward.normalized();
-	Vector3 x = up.cross(z);
-	if (x.is_equal_approx(Vector3{0.0f, 0.0f, 0.0f}))
-	{
-		// TODO: warn
-		return Quaternion{ 0.0f, 0.0f, 0.0f, 1.0f };
-	}
-	x.normalize();
-	Vector3 y = z.cross(x);
 	// TODO: use a more direct math without Basis?
 	Basis basis{};
 	// Note: we want to set columns; constructor sets rows instead.
-	basis.set_column(0, x);
-	basis.set_column(1, y);
-	basis.set_column(2, z);
+	basis.set_column(0, x.normalized());
+	basis.set_column(1, y.normalized());
+	basis.set_column(2, z.normalized());
+	return basis.get_quaternion();
+}
+
+Quaternion _W::quat_from_up(Vector3 up, Vector3 forward) {
+	Vector3 y = up;
+	Vector3 z = -forward;
+	Vector3 x = y.cross(z);
+	z = x.cross(y);  // Make sure orthonormal - forward may change.
+	if (x.is_zero_approx() || y.is_zero_approx() || z.is_zero_approx()) {
+		// TODO: warn
+		return Quaternion{ 0.0f, 0.0f, 0.0f, 1.0f };
+	}
+	// TODO: use a more direct math without Basis?
+	Basis basis{};
+	// Note: we want to set columns; constructor sets rows instead.
+	basis.set_column(0, x.normalized());
+	basis.set_column(1, y.normalized());
+	basis.set_column(2, z.normalized());
 	return basis.get_quaternion();
 }
 
@@ -217,6 +229,7 @@ void _W::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("spatial_get_rotation_quat", "spatial"), &_W::spatial_get_rotation_quat);
 
 	ClassDB::bind_method(D_METHOD("quat", "forward", "up"), &_W::quat);
+	ClassDB::bind_method(D_METHOD("quat_from_up", "up", "forward"), &_W::quat_from_up);
 
 	ClassDB::bind_method(D_METHOD("define_tag", "tag_name"), &_W::define_tag);
 	ClassDB::bind_method(D_METHOD("get_tag", "tag_name"), &_W::get_tag);
