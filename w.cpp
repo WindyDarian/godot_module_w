@@ -220,10 +220,12 @@ Quaternion _W::quat_align_forward(Vector3 forward, Quaternion quat) {
 	Vector3 y = quat.xform(Vector3{ 0.0f, 1.0f, 0.0f });
 	Vector3 z = -forward;
 	Vector3 x = y.cross(z);
+	y = z.cross(x);
 	if (x.is_zero_approx() || y.is_zero_approx() || z.is_zero_approx()) {
 		x = quat.xform(Vector3{ 1.0f, 0.0f, 0.0f });
 		z = -forward;
 		y = z.cross(x);
+		x = y.cross(z);
 	}
 	Basis basis{};
 	basis.set_column(0, x.normalized());
