@@ -213,6 +213,25 @@ Quaternion _W::quat_from_up(Vector3 up, Vector3 forward) {
 	return basis.get_quaternion();
 }
 
+Quaternion _W::quat_align_forward(Vector3 forward, Quaternion quat) {
+	if (forward.is_zero_approx()) {
+		return quat;
+	}
+	Vector3 y = quat.xform(Vector3{ 0.0f, 1.0f, 0.0f });
+	Vector3 z = -forward;
+	Vector3 x = y.cross(z);
+	if (x.is_zero_approx() || y.is_zero_approx() || z.is_zero_approx()) {
+		x = quat.xform(Vector3{ 1.0f, 0.0f, 0.0f });
+		z = -forward;
+		y = z.cross(x);
+	}
+	Basis basis{};
+	basis.set_column(0, x.normalized());
+	basis.set_column(1, y.normalized());
+	basis.set_column(2, z.normalized());
+	return basis.get_quaternion();
+}
+
 static Quaternion _spatial_get_rotation_quat(const Node3D *spatial)
 {
 	ERR_FAIL_NULL_V(spatial, Quaternion());
@@ -230,6 +249,7 @@ void _W::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("quat", "forward", "up"), &_W::quat);
 	ClassDB::bind_method(D_METHOD("quat_from_up", "up", "forward"), &_W::quat_from_up);
+	ClassDB::bind_method(D_METHOD("quat_align_forward", "forward", "quat"), &_W::quat_align_forward);
 
 	ClassDB::bind_method(D_METHOD("define_tag", "tag_name"), &_W::define_tag);
 	ClassDB::bind_method(D_METHOD("get_tag", "tag_name"), &_W::get_tag);

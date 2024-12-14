@@ -27,6 +27,8 @@ public:
 	Quaternion quat(Vector3 forward, Vector3 up);
 	/** Construct a quaternion from up vector and forward vector. Prioritize keeping up vector. */
 	Quaternion quat_from_up(Vector3 up, Vector3 forward);
+	/** Quat(forward, quat * up), but uses current right vector to handle singularity */
+	Quaternion quat_align_forward(Vector3 forward, Quaternion quat);
 
 	/** Register a new tag. */
 	void define_tag(const String& tag_name);
