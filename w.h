@@ -18,10 +18,8 @@ protected:
 public:
 	/** Get local rotation of a spatial node as a quaternion. */
 	Quaternion spatial_get_rotation_quat(const Node* spatial) const;
-	/** Set local rotation of a spatial node from a quaternion. This will reset local scale to one. */
+	/** Set local rotation of a spatial node from a quaternion. */
 	void spatial_set_rotation_quat(Node *spatial, const Quaternion& rotation) const;
-	/** Set local rotation of a spatial node from a quaternion. This will keep local scale. */
-	void spatial_set_rotation_quat_keep_scale(Node *spatial, const Quaternion& rotation) const;
 
 	/** Construct a quaternion from forward vector and up vector. Prioritize keeping forward vector.*/
 	Quaternion quat(Vector3 forward, Vector3 up);

@@ -155,26 +155,11 @@ bool _W::match_tag(int a, int b)
 static void _spatial_set_rotation_quat(Node3D *spatial, const Quaternion &rotation)
 {
 	ERR_FAIL_NULL(spatial);
-	Transform3D transform = spatial->get_transform();
-	transform.set_basis(Basis(rotation));
-	spatial->set_transform(transform);
+	spatial->set_quaternion(rotation);
 }
 void _W::spatial_set_rotation_quat(Node *spatial, const Quaternion &rotation) const   // Note: Node3D doesn't have conversion to Variant...
 {
 	_spatial_set_rotation_quat(Object::cast_to<Node3D>(spatial), rotation);
-}
-
-static void _spatial_set_rotation_quat_keep_scale(Node3D *spatial, const Quaternion &rotation)
-{
-	ERR_FAIL_NULL(spatial);
-	Transform3D transform = spatial->get_transform();
-	Vector3 original_scale(transform.basis.get_scale());
-	transform.set_basis(Basis(rotation, original_scale));
-	spatial->set_transform(transform);
-}
-void _W::spatial_set_rotation_quat_keep_scale(Node* spatial, const Quaternion& rotation) const
-{
-	_spatial_set_rotation_quat_keep_scale(Object::cast_to<Node3D>(spatial), rotation);
 }
 
 Quaternion _W::quat(Vector3 forward, Vector3 up) {
@@ -246,7 +231,6 @@ Quaternion _W::spatial_get_rotation_quat(const Node *spatial) const
 
 void _W::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("spatial_set_rotation_quat", "spatial", "quaternion"), &_W::spatial_set_rotation_quat);
-	ClassDB::bind_method(D_METHOD("spatial_set_rotation_quat_keep_scale", "spatial", "quaternion"), &_W::spatial_set_rotation_quat_keep_scale);
 	ClassDB::bind_method(D_METHOD("spatial_get_rotation_quat", "spatial"), &_W::spatial_get_rotation_quat);
 
 	ClassDB::bind_method(D_METHOD("quat", "forward", "up"), &_W::quat);
