@@ -171,7 +171,6 @@ Quaternion _W::quat(Vector3 forward, Vector3 up) {
 		// TODO: warn
 		return Quaternion{ 0.0f, 0.0f, 0.0f, 1.0f };
 	}
-	// TODO: use a more direct math without Basis?
 	Basis basis{};
 	// Note: we want to set columns; constructor sets rows instead.
 	basis.set_column(0, x.normalized());
@@ -189,7 +188,6 @@ Quaternion _W::quat_from_up(Vector3 up, Vector3 forward) {
 		// TODO: warn
 		return Quaternion{ 0.0f, 0.0f, 0.0f, 1.0f };
 	}
-	// TODO: use a more direct math without Basis?
 	Basis basis{};
 	// Note: we want to set columns; constructor sets rows instead.
 	basis.set_column(0, x.normalized());
@@ -202,6 +200,7 @@ Quaternion _W::quat_align_forward(Vector3 forward, Quaternion quat) {
 	if (forward.is_zero_approx()) {
 		return quat;
 	}
+	// Try to keep up vector, if possible
 	Vector3 y = quat.xform(Vector3{ 0.0f, 1.0f, 0.0f });
 	Vector3 z = -forward;
 	Vector3 x = y.cross(z);
@@ -211,6 +210,72 @@ Quaternion _W::quat_align_forward(Vector3 forward, Quaternion quat) {
 		z = -forward;
 		y = z.cross(x);
 		x = y.cross(z);
+	}
+	Basis basis{};
+	basis.set_column(0, x.normalized());
+	basis.set_column(1, y.normalized());
+	basis.set_column(2, z.normalized());
+	return basis.get_quaternion();
+}
+
+Quaternion _W::quat_align_forward_maintain_right(Vector3 forward, Quaternion quat) {
+	if (forward.is_zero_approx()) {
+		return quat;
+	}
+	// Try to keep right vector, if possible
+	Vector3 x = quat.xform(Vector3{ 1.0f, 0.0f, 0.0f });
+	Vector3 z = -forward;
+	Vector3 y = z.cross(x);
+	x = y.cross(z);
+	if (x.is_zero_approx() || y.is_zero_approx() || z.is_zero_approx()) {
+		y = quat.xform(Vector3{ 0.0f, 1.0f, 0.0f });
+		z = -forward;
+		x = y.cross(z);
+		y = z.cross(x);
+	}
+	Basis basis{};
+	basis.set_column(0, x.normalized());
+	basis.set_column(1, y.normalized());
+	basis.set_column(2, z.normalized());
+	return basis.get_quaternion();
+}
+
+Quaternion _W::quat_align_up(Vector3 up, Quaternion quat) {
+	if (up.is_zero_approx()) {
+		return quat;
+	}
+	// Try to keep forward vector, if possible
+	Vector3 z = quat.xform(Vector3{ 0.0f, 0.0f, 1.0f });
+	Vector3 y = up;
+	Vector3 x = y.cross(z);
+	z = x.cross(y);
+	if (x.is_zero_approx() || y.is_zero_approx() || z.is_zero_approx()) {
+		x = quat.xform(Vector3{ 1.0f, 0.0f, 0.0f });
+		y = up;
+		z = x.cross(y);
+		x = y.cross(z);
+	}
+	Basis basis{};
+	basis.set_column(0, x.normalized());
+	basis.set_column(1, y.normalized());
+	basis.set_column(2, z.normalized());
+	return basis.get_quaternion();
+}
+
+Quaternion _W::quat_align_up_maintain_right(Vector3 up, Quaternion quat) {
+	if (up.is_zero_approx()) {
+		return quat;
+	}
+	// Try to keep right vector, if possible
+	Vector3 x = quat.xform(Vector3{ 1.0f, 0.0f, 0.0f });
+	Vector3 y = up;
+	Vector3 z = x.cross(y);
+	x = y.cross(z);
+	if (x.is_zero_approx() || y.is_zero_approx() || z.is_zero_approx()) {
+		z = quat.xform(Vector3{ 0.0f, 0.0f, 1.0f });
+		y = up;
+		x = y.cross(z);
+		z = x.cross(y);
 	}
 	Basis basis{};
 	basis.set_column(0, x.normalized());
@@ -236,6 +301,9 @@ void _W::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("quat", "forward", "up"), &_W::quat);
 	ClassDB::bind_method(D_METHOD("quat_from_up", "up", "forward"), &_W::quat_from_up);
 	ClassDB::bind_method(D_METHOD("quat_align_forward", "forward", "quat"), &_W::quat_align_forward);
+	ClassDB::bind_method(D_METHOD("quat_align_forward_maintain_right", "forward", "quat"), &_W::quat_align_forward_maintain_right);
+	ClassDB::bind_method(D_METHOD("quat_align_up", "up", "quat"), &_W::quat_align_up);
+	ClassDB::bind_method(D_METHOD("quat_align_up_maintain_right", "up", "quat"), &_W::quat_align_up_maintain_right);
 
 	ClassDB::bind_method(D_METHOD("define_tag", "tag_name"), &_W::define_tag);
 	ClassDB::bind_method(D_METHOD("get_tag", "tag_name"), &_W::get_tag);
