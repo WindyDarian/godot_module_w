@@ -4,6 +4,7 @@
 #include "w.h"
 
 #include "core/variant/dictionary.h"
+#include "core/variant/variant.h"
 
 using w_tag_t = int32_t;
 const w_tag_t k_tag_null = 0;

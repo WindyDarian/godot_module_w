@@ -3,6 +3,8 @@
 
 #include "register_types.h"
 
+#include "core/config/engine.h"
+
 #include "w.h"
 
 static _W* s_w = nullptr;
