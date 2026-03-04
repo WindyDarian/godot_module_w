@@ -3,6 +3,7 @@
 
 #include "w.h"
 
+#include "core/object/class_db.h"
 #include "core/variant/dictionary.h"
 #include "core/variant/variant.h"
 
